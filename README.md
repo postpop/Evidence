@@ -1,4 +1,5 @@
 Evidence
 ========
 
-learn what aspects of a stimulus influence behavior
+
+learn the stimulus features that influence a behavior
