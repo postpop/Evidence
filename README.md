@@ -9,19 +9,19 @@ Fits a multi-dimensional LNP-Integrator model to behavioral data.
 Some tweaks to optimize performance:
 - filter is represented in a raised-cosine basis
 - nonlinearity is parameterized (sigmoidal)
-- GPU implementation
+- GPU implementation of the model for faster evaluation during fitting (using Matlab's GPU capabilities).
 
-## Demo code:
-'''Matlab
+## Demo code
+```matlab
 load('demo.mat')
 stim = ;
 resp = ;
-bee = Behave(stim, resp, ...); % demo code
+p.bee = Behave(stim, resp, ..);
+pGa = GA(p);
+```
 
-GA();
+This should yield the following Figure:
 
-'''
-the could should yield the following Figure:
 ![demo figure](demo.png)
 
 
