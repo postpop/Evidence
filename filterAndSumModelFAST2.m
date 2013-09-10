@@ -1,6 +1,6 @@
 function [fitness, out] = filterAndSumModelFAST2(param, p)
 
-[popSize len] = size(param);
+[popSize, len] = size(param);
 out = [];
 
 tmpParam = reshape(param,popSize,len/p.nFilt,[]);
@@ -20,9 +20,9 @@ end
 for n = 1:length(chunkIdx)
    for f = 1:p.nFilt
       %% pedestrian's version
-      tmp = p.bee.SSraw*tmpParam(chunkIdx{n},1:p.nComp,f)';
-      tmp = bsxfun(@minus, tmp, 2*6*(1+tmpParam(chunkIdx{n},p.nComp + 2,f))'+eps);
-      tmp = bsxfun(@times, tmp, 2*-16*(1+tmpParam(chunkIdx{n},p.nComp + 1,f))');
+      tmp = p.bee.SSraw*tmpParam(chunkIdx{n},1:p.nComp,f)';% filter
+      tmp = bsxfun(@minus, tmp, 2*4*(1+tmpParam(chunkIdx{n},p.nComp + 2,f))'+eps);
+      tmp = bsxfun(@times, tmp, 2*8*(1+tmpParam(chunkIdx{n},p.nComp + 1,f))');
       tmp = 1./(1+exp(tmp));
       tmp = bsxfun(@times,tmp, p.bee.nanMask);
       tmp = reshape(tmp,p.bee.maxStimLen,p.bee.stis, length(chunkIdx{n}));

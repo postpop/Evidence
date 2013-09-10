@@ -12,8 +12,10 @@ for ind = 1:popSize
       %filters(fil,:) = param(ind,idx(fil,1:end-2))./sum((param(ind,idx(fil,1:end-2))));% normalize filter
       %filters(fil,:) = param(ind,idx(fil,1:end-2))./norm(param(ind,idx(fil,1:end-2)));% normalize filter
       % exp nonlinearity
-      nlParam(fil,1) = 16*(1+param(ind,idx(fil,end-1)));%8*(1+(param(ind,idx(fil,end-1))));%20+40*(param(ind,idx(fil,end-1)));
-      nlParam(fil,2) = 6*(1+param(ind,idx(fil,end))+eps);%4*(1+param(ind,idx(fil,end))+eps);%4+8*param(ind,idx(fil,end))+eps;
+%      nlParam(fil,1) = 16*(1+param(ind,idx(fil,end-1)));%8*(1+(param(ind,idx(fil,end-1))));%20+40*(param(ind,idx(fil,end-1)));
+%      nlParam(fil,2) = 6*(1+param(ind,idx(fil,end))+eps);%4*(1+param(ind,idx(fil,end))+eps);%4+8*param(ind,idx(fil,end))+eps;
+      nlParam(fil,1) = 2*8*(1+param(ind,idx(fil,end-1)));%8*(1+(param(ind,idx(fil,end-1))));%20+40*(param(ind,idx(fil,end-1)));
+      nlParam(fil,2) = 2*4*(1+param(ind,idx(fil,end))+eps);%4*(1+param(ind,idx(fil,end))+eps);%4+8*param(ind,idx(fil,end))+eps;
    end
    
    if p.nFilt>1 && p.orthogonalizeFilter%orthogonalize filters
