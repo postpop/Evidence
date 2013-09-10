@@ -13,9 +13,7 @@ Some tweaks to optimize performance:
 
 ## Demo code
 ```matlab
-load('demo.mat')
-stim = ;
-resp = ;
+load('demo.mat')% loading stimulus and response
 p.bee = Behave(stim, resp, ..);
 pGa = GA(p);
 ```
