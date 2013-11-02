@@ -4,6 +4,10 @@ function [fitness, out] = filterAndSumModel(param, p)
 fitness = zeros(popSize, 1);
 out = [];
 
+if ~isfield(pT,'nlParamScale1') 
+   p.nlParamScale1 = 16;
+   p.nlParamScale2 = 8;
+end
 for ind = 1:popSize
    % fix modelParameters
    idx = reshape(1:len, [],p.nFilt)';
@@ -14,8 +18,8 @@ for ind = 1:popSize
       % exp nonlinearity
 %      nlParam(fil,1) = 16*(1+param(ind,idx(fil,end-1)));%8*(1+(param(ind,idx(fil,end-1))));%20+40*(param(ind,idx(fil,end-1)));
 %      nlParam(fil,2) = 6*(1+param(ind,idx(fil,end))+eps);%4*(1+param(ind,idx(fil,end))+eps);%4+8*param(ind,idx(fil,end))+eps;
-      nlParam(fil,1) = 2*8*(1+param(ind,idx(fil,end-1)));%8*(1+(param(ind,idx(fil,end-1))));%20+40*(param(ind,idx(fil,end-1)));
-      nlParam(fil,2) = 2*4*(1+param(ind,idx(fil,end))+eps);%4*(1+param(ind,idx(fil,end))+eps);%4+8*param(ind,idx(fil,end))+eps;
+      nlParam(fil,1) = p.nlParamScale1*(1+param(ind,idx(fil,end-1)));%8*(1+(param(ind,idx(fil,end-1))));%20+40*(param(ind,idx(fil,end-1)));
+      nlParam(fil,2) = p.nlParamScale2*(1+param(ind,idx(fil,end))+eps);%4*(1+param(ind,idx(fil,end))+eps);%4+8*param(ind,idx(fil,end))+eps;
    end
    
    if p.nFilt>1 && p.orthogonalizeFilter%orthogonalize filters
