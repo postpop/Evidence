@@ -1,10 +1,10 @@
 function [fitness, out] = filterAndSumModel(param, p)
 
-[popSize len] = size(param);
+[popSize, len] = size(param);
 fitness = zeros(popSize, 1);
 out = [];
 
-if ~isfield(pT,'nlParamScale1') 
+if ~isfield(p,'nlParamScale1') 
    p.nlParamScale1 = 16;
    p.nlParamScale2 = 8;
 end

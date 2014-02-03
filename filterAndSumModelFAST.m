@@ -17,12 +17,21 @@ if ~isfield(p,'chunk') || p.chunk==1
    chunkIdx{n+1} = max(chunks(:))+1:popSize;
 end
 
+if ~isfield(p,'nlParamScale1') 
+   p.nlParamScale1 = 16;
+   p.nlParamScale2 = 8;
+end
+
+
 for n = 1:length(chunkIdx)
    for f = 1:p.nFilt
       %% pedestrian's version
       tmp = p.bee.SSraw*tmpParam(chunkIdx{n},1:p.nComp,f)';
-      tmp = bsxfun(@minus, tmp, 6*(1+tmpParam(chunkIdx{n},p.nComp + 2,f))'+eps);
-      tmp = bsxfun(@times, tmp, -16*(1+tmpParam(chunkIdx{n},p.nComp + 1,f))');
+      %tmp = bsxfun(@minus, tmp, 6*(1+tmpParam(chunkIdx{n},p.nComp + 2,f))'+eps);
+      tmp = bsxfun(@minus, tmp, p.nlParamScale2*(1+tmpParam(chunkIdx{n},p.nComp + 2,f))'+eps);
+      %tmp = bsxfun(@times, tmp, -16*(1+tmpParam(chunkIdx{n},p.nComp + 1,f))');
+      tmp = bsxfun(@times, tmp, -p.nlParamScale1*(1+tmpParam(chunkIdx{n},p.nComp + 1,f))');
+
       tmp = 1./(1+exp(tmp));
       tmp = bsxfun(@times,tmp, p.bee.nanMask);
       tmp = reshape(tmp,p.bee.maxStimLen,p.bee.stis, length(chunkIdx{n}));
