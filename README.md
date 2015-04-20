@@ -13,14 +13,14 @@ Some tweaks to optimize performance:
 
 ## Demo code
 ```matlab
-load('demo.mat')% loading stimulus and response
+load('demo/demo.mat')% loading stimulus and response
 p.bee = Behave(stim, resp, ..);
 pGa = GA(p);
 ```
 
-This should yield the following Figure:
+This should produce the following Figure:
 
-![demo figure](demo.png)
+![demo figure](demo/demo.png)
 
 
 ## Code base used in:
