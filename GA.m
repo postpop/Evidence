@@ -1,44 +1,55 @@
 function p = GA(popSize, maxGens, ngenes, bits, objFun, objFunParam)
 % p = GA(popSize, maxGens, ngenes, bits, objFun, objFunParam)
+
+% modified from based on:
 % TurboGA is an experimental genetic algorithm based on SpeedyGA
 % Copyright (C) 2007, 2008, 2009  Keki Burjorjee
 % Created and tested under Matlab 7 (R14).
 
-len = bits*ngenes;                    % The length of the genomes
-param = zeros(popSize, len);
+len = bits*ngenes;                    
+% The length of the genomes
 
-
-clampingFlag=1;            % 1 => Use a mechanism called clamping (see
+clampingFlag=1;            
+% 1 => Use a mechanism called clamping (see
 %       http://www.cs.brandeis.edu/~kekib/GAWorkings.pdf for details)
 % 0 => Do not use clamping
 
-probCrossover=.96;           % The probability of crossing over.
-probMutation=0.003;        % The mutation probability (per bit).
+probCrossover=.96;           
+% The probability of crossing over.
+probMutation=0.003;        
+% The mutation probability (per bit).
 % If clampingFlag=1, probMutation should not be
 % dependent on len, the length of the genomes.
 %
-sigmaScalingFlag=1;        % Sigma Scaling is described on pg 168 of M. Mitchell's
+sigmaScalingFlag=1;       
+% Sigma Scaling is described on pg 168 of M. Mitchell's
 % GA book. It often improves GA performance.
-sigmaScalingCoeff=1;       % Higher values => less fitness pressure
+sigmaScalingCoeff=1;       
+% Higher values => less fitness pressure
 
-SUSFlag=1;                 % 1 => Use Stochastic Universal Sampling (pg 168 of
+SUSFlag=1;                
+% 1 => Use Stochastic Universal Sampling (pg 168 of
 %      M. Mitchell's GA book)
 % 0 => Do not use Stochastic Universal Sampling
 %      Stochastic Universal Sampling almost always
 %      improves performance
 
-crossoverType=2;           % 0 => no crossover
+crossoverType=2;           
+% 0 => no crossover
 % 1 => 1pt crossover
 % 2 => uniform crossover
 % If clampingFlag=1, crossoverType should be 2
 
-visualizationFlag=0;       % 0 => don't visualize bit frequencies
+visualizationFlag=0;      
+% 0 => don't visualize bit frequencies
 % 1 => visualize bit frequencies
 
-verboseFlag=1;             % 1 => display details of each generation
+verboseFlag=1;             
+% 1 => display details of each generation
 % 0 => run quietly
 
-useMaskRepositoriesFlag=0; % 1 => draw uniform crossover and mutation masks from
+useMaskRepositoriesFlag=0; 
+% 1 => draw uniform crossover and mutation masks from
 %      a pregenerated repository of randomly generated bits.
 %      Significantly improves the speed of the code with
 %      no apparent changes in the behavior of
@@ -46,7 +57,10 @@ useMaskRepositoriesFlag=0; % 1 => draw uniform crossover and mutation masks from
 % 0 => generate uniform crossover and mutation
 %      masks on the fly. Slower.
 
-elitePool = ceil(round(popSize/50)/2)*2; % number of best individuals to clone to the next generation
+elitePoolFlag = 1;
+% 1 - never loose the best solution by always keeping 
+%     (and never mutating) the N best solutions
+elitePoolSizeSize = ceil(round(popSize/50)/2)*2; % number of best individuals to clone to the next generation
 
 
 % clamping parameters
@@ -57,22 +71,21 @@ flagPeriod=200;
 flaggedGens=-ones(1,len);
 
 
-% crossover masks to use if crossoverType==0.
-mutationOnlycrossmasks=false(popSize-elitePool,len);
+% crossover masks to use if crossoverType==0
+mutationOnlycrossmasks=false(popSize-elitePoolSize,len);
 
-% pre-generate two “repositories” of random binary digits from which the
+% DOESN'T HELP FOR REAL-LIFE PROBLEMS - delete??
+% pre-generate two repositoriesof random binary digits from which the
 % the masks used in mutation and uniform crossover will be picked.
 % maskReposFactor determines the size of these repositories.
-
 maskReposFactor=50;
-uniformCrossmaskRepos=rand((popSize-elitePool)/2,(len+1)*maskReposFactor)<0.5;
-mutmaskRepos=rand(popSize-elitePool,(len+1)*maskReposFactor)<probMutation;
+uniformCrossmaskRepos=rand((popSize-elitePoolSize)/2,(len+1)*maskReposFactor)<0.5;
+mutmaskRepos=rand(popSize-elitePoolSize,(len+1)*maskReposFactor)<probMutation;
 
 % preallocate vectors for recording the average and maximum fitness in each
 % generation
 avgFitnessHist=zeros(1,maxGens+1);
 maxFitnessHist=zeros(1,maxGens+1);
-
 
 eliteIndiv=[];
 eliteFitness=-realmax;
@@ -169,19 +182,19 @@ for gen=0:maxGens
    [~, parentIndices] = histc(markers,[0 cumNormFitnessVals]);
    parentIndices=parentIndices(randperm(popSize));
    
-   eliteParents = pop(idx(end-elitePool+1:end),:);
+   eliteParents = pop(idx(end-elitePoolSize+1:end),:);
    % determine the first parents of each mating pair
-   firstParents=pop(parentIndices(1:(popSize-elitePool)/2),:);
+   firstParents=pop(parentIndices(1:(popSize-elitePoolSize)/2),:);
    % determine the second parents of each mating pair
-   secondParents=pop(parentIndices((popSize+elitePool)/2+1:end),:);
+   secondParents=pop(parentIndices((popSize+elitePoolSize)/2+1:end),:);
    
    % create crossover masks
    if crossoverType==0
       masks=mutationOnlycrossmasks;
    elseif crossoverType==1
-      masks=false((popSize-elitePool)/2, len);
-      temp=ceil(rand((popSize-elitePool)/2,1)*(len-1));
-      for i=1:(popSize-elitePool)/2
+      masks=false((popSize-elitePoolSize)/2, len);
+      temp=ceil(rand((popSize-elitePoolSize)/2,1)*(len-1));
+      for i=1:(popSize-elitePoolSize)/2
          masks(i,1:temp(i))=true;
       end
    else
@@ -189,12 +202,12 @@ for gen=0:maxGens
          temp=floor(rand*len*(maskReposFactor-1));
          masks=uniformCrossmaskRepos(:,temp+1:temp+len);
       else
-         masks=rand((popSize-elitePool)/2, len)<.5;
+         masks=rand((popSize-elitePoolSize)/2, len)<.5;
       end
    end
    
    % determine which parent pairs to leave uncrossed
-   reprodIndices=rand((popSize-elitePool)/2,1)<1-probCrossover;
+   reprodIndices=rand((popSize-elitePoolSize)/2,1)<1-probCrossover;
    masks(reprodIndices,:)=false;
    
    % implement crossover
@@ -209,7 +222,7 @@ for gen=0:maxGens
       temp=floor(rand*len*(maskReposFactor-1));
       masks=mutmaskRepos(1:end,temp+1:temp+len);
    else
-      masks=rand(popSize-elitePool, len)<probMutation;
+      masks=rand(popSize-elitePoolSize, len)<probMutation;
    end
    if clampingFlag
       masks(:,~mutateLocus)=false;

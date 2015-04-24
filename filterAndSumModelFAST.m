@@ -7,10 +7,10 @@ tmpParam = reshape(param,popSize,len/p.nFilt,[]);
 features = zeros(p.nFilt, p.bee.stis, popSize);
 chunkIdx{1} = 1:popSize;
 if ~isfield(p,'chunk') || p.chunk==1
-   nChunks = floor(popSize/100);
+   nChunks = floor(popSize/200);
    chunkSize = ceil(popSize/nChunks);
    chunks = reshape(1:(nChunks-1)*chunkSize,chunkSize,[]);
-   chunkIdx = cell(chunks,1);
+   %chunkIdx = cell(chunks,1);
    for n = 1:nChunks-1
       chunkIdx{n} = chunks(:,n);
    end
